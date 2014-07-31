@@ -541,6 +541,26 @@
     'name': 'meta.function.perl'
   }
   {
+    "begin": "\\s*(method)\\s+([-a-zA-Z0-9_]+)\\s*\\(",
+    "beginCaptures":
+      "1":
+        "name": "storage.type.sub.perl"
+      "2":
+        "name": "entity.name.function.perl"
+    "end": "\\)\\s*[\\n\\{]",
+    "name": "meta.function.perl",
+    "patterns": [
+      {
+        "captures":
+          "1":
+            "name": "storage.type.method.perl"
+          "2":
+            "name": "variable.parameter.function.perl"
+        "match": "\\s*[,]?\\s*([a-zA-Z_\\[\\]\\(\\)0-9\\s]+)\\s+[:]?([a-zA-Z0-9_]+)[\\?\\!]?\\s*[,]?"
+      }
+    ]
+  }
+  {
     'captures':
       '1':
         'name': 'entity.name.function.perl'
