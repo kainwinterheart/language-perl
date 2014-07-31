@@ -6,13 +6,13 @@
     "atom": "*",
     "node": "*"
   },
-  "homepage": "http://atom.github.io/language-perl",
+  "homepage": "https://github.com/kainwinterheart/language-perl",
   "repository": {
     "type": "git",
-    "url": "https://github.com/atom/language-perl.git"
+    "url": "https://github.com/kainwinterheart/language-perl.git"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/atom/language-perl/issues"
+    "url": "https://github.com/kainwinterheart/language-perl/issues"
   }
 }
