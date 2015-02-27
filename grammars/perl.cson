@@ -1,13 +1,14 @@
-'comment': '\n\tTODO:\tInclude RegExp syntax\n'
+'scopeName': 'source.perl'
+'name': 'Perl'
 'fileTypes': [
   'pl'
+  'PL'
   'pm'
   'pod'
+  'psgi'
   't'
-  'PL'
 ]
 'firstLineMatch': '^#!.*\\bperl\\b'
-'name': 'Perl'
 'patterns': [
   {
     'include': '#line_comment'
@@ -1766,4 +1767,3 @@
         'name': 'variable.other.readwrite.global.special.perl'
       }
     ]
-'scopeName': 'source.perl'
