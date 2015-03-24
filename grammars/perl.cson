@@ -648,8 +648,10 @@
     ]
   }
   {
-    'match': '\\b\\w+\\s*(?==>)'
-    'name': 'constant.other.key.perl'
+    'captures':
+      '1':
+        'name': 'constant.other.key.perl'
+    'match': '\\b(\\w+)\\s*(?==>)'
   }
   {
     'match': '(?<={)\\s*\\w+\\s*(?=})'
@@ -759,18 +761,24 @@
     'name': 'keyword.operator.logical.perl'
   }
   {
-    'match': '(<=>| =>|->)'
+    'match': '(<=>|=>|->)'
     'name': 'keyword.operator.comparison.perl'
   }
   {
-    'begin': '((<<) *"HTML").*\\n?'
+    'begin': '(((<<) *"HTML"))(.*)\\n?'
     'captures':
-      '0':
-        'name': 'punctuation.definition.string.perl'
       '1':
-        'name': 'string.unquoted.heredoc.doublequote.perl'
+        'name': 'punctuation.definition.string.perl'
       '2':
+        'name': 'string.unquoted.heredoc.doublequote.perl'
+      '3':
         'name': 'punctuation.definition.heredoc.perl'
+      '4':
+        'patterns': [
+          {
+            'include': '$self'
+          }
+        ]
     'contentName': 'text.html.embedded.perl'
     'end': '(^HTML$)'
     'patterns': [
@@ -786,14 +794,20 @@
     ]
   }
   {
-    'begin': '((<<) *"XML").*\\n?'
+    'begin': '(((<<) *"XML"))(.*)\\n?'
     'captures':
-      '0':
-        'name': 'punctuation.definition.string.perl'
       '1':
-        'name': 'string.unquoted.heredoc.doublequote.perl'
+        'name': 'punctuation.definition.string.perl'
       '2':
+        'name': 'string.unquoted.heredoc.doublequote.perl'
+      '3':
         'name': 'punctuation.definition.heredoc.perl'
+      '4':
+        'patterns': [
+          {
+            'include': '$self'
+          }
+        ]
     'contentName': 'text.xml.embedded.perl'
     'end': '(^XML$)'
     'patterns': [
@@ -809,14 +823,20 @@
     ]
   }
   {
-    'begin': '((<<) *"CSS").*\\n?'
+    'begin': '(((<<) *"CSS"))(.*)\\n?'
     'captures':
-      '0':
-        'name': 'punctuation.definition.string.perl'
       '1':
-        'name': 'string.unquoted.heredoc.doublequote.perl'
+        'name': 'punctuation.definition.string.perl'
       '2':
+        'name': 'string.unquoted.heredoc.doublequote.perl'
+      '3':
         'name': 'punctuation.definition.heredoc.perl'
+      '4':
+        'patterns': [
+          {
+            'include': '$self'
+          }
+        ]
     'contentName': 'text.css.embedded.perl'
     'end': '(^CSS$)'
     'patterns': [
@@ -832,14 +852,20 @@
     ]
   }
   {
-    'begin': '((<<) *"JAVASCRIPT").*\\n?'
+    'begin': '(((<<) *"JAVASCRIPT"))(.*)\\n?'
     'captures':
-      '0':
-        'name': 'punctuation.definition.string.perl'
       '1':
-        'name': 'string.unquoted.heredoc.doublequote.perl'
+        'name': 'punctuation.definition.string.perl'
       '2':
+        'name': 'string.unquoted.heredoc.doublequote.perl'
+      '3':
         'name': 'punctuation.definition.heredoc.perl'
+      '4':
+        'patterns': [
+          {
+            'include': '$self'
+          }
+        ]
     'contentName': 'text.js.embedded.perl'
     'end': '(^JAVASCRIPT$)'
     'patterns': [
@@ -855,14 +881,20 @@
     ]
   }
   {
-    'begin': '((<<) *"SQL").*\\n?'
+    'begin': '(((<<) *"SQL"))(.*)\\n?'
     'captures':
-      '0':
-        'name': 'punctuation.definition.string.perl'
       '1':
-        'name': 'string.unquoted.heredoc.doublequote.perl'
+        'name': 'punctuation.definition.string.perl'
       '2':
+        'name': 'string.unquoted.heredoc.doublequote.perl'
+      '3':
         'name': 'punctuation.definition.heredoc.perl'
+      '4':
+        'patterns': [
+          {
+            'include': '$self'
+          }
+        ]
     'contentName': 'source.sql.embedded.perl'
     'end': '(^SQL$)'
     'patterns': [
@@ -878,14 +910,20 @@
     ]
   }
   {
-    'begin': '((<<) *"POSTSCRIPT").*\\n?'
+    'begin': '(((<<) *"POSTSCRIPT"))(.*)\\n?'
     'captures':
-      '0':
-        'name': 'punctuation.definition.string.perl'
       '1':
-        'name': 'string.unquoted.heredoc.doublequote.perl'
+        'name': 'punctuation.definition.string.perl'
       '2':
+        'name': 'string.unquoted.heredoc.doublequote.perl'
+      '3':
         'name': 'punctuation.definition.heredoc.perl'
+      '4':
+        'patterns': [
+          {
+            'include': '$self'
+          }
+        ]
     'contentName': 'text.postscript.embedded.perl'
     'end': '(^POSTSCRIPT$)'
     'patterns': [
@@ -901,16 +939,22 @@
     ]
   }
   {
-    'begin': '((<<) *"([^"]*)").*\\n?'
+    'begin': '(((<<) *"([^"]*)"))(.*)\\n?'
     'captures':
-      '0':
-        'name': 'punctuation.definition.string.perl'
       '1':
-        'name': 'string.unquoted.heredoc.doublequote.perl'
+        'name': 'punctuation.definition.string.perl'
       '2':
+        'name': 'string.unquoted.heredoc.doublequote.perl'
+      '3':
         'name': 'punctuation.definition.heredoc.perl'
+      '5':
+        'patterns': [
+          {
+            'include': '$self'
+          }
+        ]
     'contentName': 'string.unquoted.heredoc.doublequote.perl'
-    'end': '(^\\3$)'
+    'end': '(^\\4$)'
     'patterns': [
       {
         'include': '#escaped_char'
@@ -921,14 +965,20 @@
     ]
   }
   {
-    'begin': '((<<) *\'HTML\').*\\n?'
+    'begin': '(((<<) *\'HTML\'))(.*)\\n?'
     'captures':
-      '0':
-        'name': 'punctuation.definition.string.perl'
       '1':
-        'name': 'string.unquoted.heredoc.quote.perl'
+        'name': 'punctuation.definition.string.perl'
       '2':
+        'name': 'string.unquoted.heredoc.quote.perl'
+      '3':
         'name': 'punctuation.definition.heredoc.perl'
+      '4':
+        'patterns': [
+          {
+            'include': '$self'
+          }
+        ]
     'contentName': 'text.html.embedded.perl'
     'end': '(^HTML$)'
     'patterns': [
@@ -938,14 +988,20 @@
     ]
   }
   {
-    'begin': '((<<) *\'XML\').*\\n?'
+    'begin': '(((<<) *\'XML\'))(.*)\\n?'
     'captures':
-      '0':
-        'name': 'punctuation.definition.string.perl'
       '1':
-        'name': 'string.unquoted.heredoc.quote.perl'
+        'name': 'punctuation.definition.string.perl'
       '2':
+        'name': 'string.unquoted.heredoc.quote.perl'
+      '3':
         'name': 'punctuation.definition.heredoc.perl'
+      '4':
+        'patterns': [
+          {
+            'include': '$self'
+          }
+        ]
     'contentName': 'text.xml.embedded.perl'
     'end': '(^XML$)'
     'patterns': [
@@ -955,14 +1011,20 @@
     ]
   }
   {
-    'begin': '((<<) *\'CSS\').*\\n?'
+    'begin': '(((<<) *\'CSS\'))(.*)\\n?'
     'captures':
-      '0':
-        'name': 'punctuation.definition.string.perl'
       '1':
-        'name': 'string.unquoted.heredoc.quote.perl'
+        'name': 'punctuation.definition.string.perl'
       '2':
+        'name': 'string.unquoted.heredoc.quote.perl'
+      '3':
         'name': 'punctuation.definition.heredoc.perl'
+      '4':
+        'patterns': [
+          {
+            'include': '$self'
+          }
+        ]
     'contentName': 'text.css.embedded.perl'
     'end': '(^CSS$)'
     'patterns': [
@@ -972,14 +1034,20 @@
     ]
   }
   {
-    'begin': '((<<) *\'JAVASCRIPT\').*\\n?'
+    'begin': '(((<<) *\'JAVASCRIPT\'))(.*)\\n?'
     'captures':
-      '0':
-        'name': 'punctuation.definition.string.perl'
       '1':
-        'name': 'string.unquoted.heredoc.quote.perl'
+        'name': 'punctuation.definition.string.perl'
       '2':
+        'name': 'string.unquoted.heredoc.quote.perl'
+      '3':
         'name': 'punctuation.definition.heredoc.perl'
+      '4':
+        'patterns': [
+          {
+            'include': '$self'
+          }
+        ]
     'contentName': 'text.js.embedded.perl'
     'end': '(^JAVASCRIPT$)'
     'patterns': [
@@ -989,14 +1057,20 @@
     ]
   }
   {
-    'begin': '((<<) *\'SQL\').*\\n?'
+    'begin': '(((<<) *\'SQL\'))(.*)\\n?'
     'captures':
-      '0':
-        'name': 'punctuation.definition.string.perl'
       '1':
-        'name': 'string.unquoted.heredoc.quote.perl'
+        'name': 'punctuation.definition.string.perl'
       '2':
+        'name': 'string.unquoted.heredoc.quote.perl'
+      '3':
         'name': 'punctuation.definition.heredoc.perl'
+      '4':
+        'patterns': [
+          {
+            'include': '$self'
+          }
+        ]
     'contentName': 'source.sql.embedded.perl'
     'end': '(^SQL$)'
     'patterns': [
@@ -1006,14 +1080,20 @@
     ]
   }
   {
-    'begin': '((<<) *\'POSTSCRIPT\').*\\n?'
+    'begin': '(((<<) *\'POSTSCRIPT\'))(.*)\\n?'
     'captures':
-      '0':
-        'name': 'punctuation.definition.string.perl'
       '1':
-        'name': 'string.unquoted.heredoc.quote.perl'
+        'name': 'punctuation.definition.string.perl'
       '2':
+        'name': 'string.unquoted.heredoc.quote.perl'
+      '3':
         'name': 'punctuation.definition.heredoc.perl'
+      '4':
+        'patterns': [
+          {
+            'include': '$self'
+          }
+        ]
     'contentName': 'source.postscript.embedded.perl'
     'end': '(^POSTSCRIPT)'
     'patterns': [
@@ -1023,28 +1103,58 @@
     ]
   }
   {
-    'begin': '((<<) *\'([^\']*)\').*\\n?'
+    'begin': '(((<<) *\'([^\']*)\'))(.*)\\n?'
     'captures':
-      '0':
-        'name': 'punctuation.definition.string.perl'
       '1':
-        'name': 'string.unquoted.heredoc.quote.perl'
+        'name': 'punctuation.definition.string.perl'
       '2':
+        'name': 'string.unquoted.heredoc.quote.perl'
+      '3':
         'name': 'punctuation.definition.heredoc.perl'
+      '5':
+        'patterns': [
+          {
+            'include': '$self'
+          }
+        ]
     'contentName': 'string.unquoted.heredoc.quote.perl'
-    'end': '(^\\3$)'
+    'end': '(^\\4$)'
   }
   {
-    'begin': '((<<) *`([^`]*)`).*\\n?'
+    'begin': '(((<<) *\\\\((?![=\\d\\$\\( ])[^;,\'"`\\s\\)]*)))(.*)\\n?'
     'captures':
-      '0':
-        'name': 'punctuation.definition.string.perl'
       '1':
-        'name': 'string.unquoted.heredoc.backtick.perl'
+        'name': 'punctuation.definition.string.perl'
       '2':
+        'name': 'string.unquoted.heredoc.quote.perl'
+      '3':
         'name': 'punctuation.definition.heredoc.perl'
+      '5':
+        'patterns': [
+          {
+            'include': '$self'
+          }
+        ]
+    'contentName': 'string.unquoted.heredoc.quote.perl'
+    'end': '(^\\4$)'
+  }
+  {
+    'begin': '(((<<) *`([^`]*)`))(.*)\\n?'
+    'captures':
+      '1':
+        'name': 'punctuation.definition.string.perl'
+      '2':
+        'name': 'string.unquoted.heredoc.backtick.perl'
+      '3':
+        'name': 'punctuation.definition.heredoc.perl'
+      '5':
+        'patterns': [
+          {
+            'include': '$self'
+          }
+        ]
     'contentName': 'string.unquoted.heredoc.backtick.perl'
-    'end': '(^\\3$)'
+    'end': '(^\\4$)'
     'patterns': [
       {
         'include': '#escaped_char'
@@ -1055,14 +1165,20 @@
     ]
   }
   {
-    'begin': '((<<) *HTML\\b).*\\n?'
+    'begin': '(((<<) *HTML\\b))(.*)\\n?'
     'captures':
-      '0':
-        'name': 'punctuation.definition.string.perl'
       '1':
-        'name': 'string.unquoted.heredoc.perl'
+        'name': 'punctuation.definition.string.perl'
       '2':
+        'name': 'string.unquoted.heredoc.perl'
+      '3':
         'name': 'punctuation.definition.heredoc.perl'
+      '4':
+        'patterns': [
+          {
+            'include': '$self'
+          }
+        ]
     'contentName': 'text.html.embedded.perl'
     'end': '(^HTML$)'
     'patterns': [
@@ -1078,14 +1194,20 @@
     ]
   }
   {
-    'begin': '((<<) *XML\\b).*\\n?'
+    'begin': '(((<<) *XML\\b))(.*)\\n?'
     'captures':
-      '0':
-        'name': 'punctuation.definition.string.perl'
       '1':
-        'name': 'string.unquoted.heredoc.perl'
+        'name': 'punctuation.definition.string.perl'
       '2':
+        'name': 'string.unquoted.heredoc.perl'
+      '3':
         'name': 'punctuation.definition.heredoc.perl'
+      '4':
+        'patterns': [
+          {
+            'include': '$self'
+          }
+        ]
     'contentName': 'text.xml.embedded.perl'
     'end': '(^XML$)'
     'patterns': [
@@ -1101,14 +1223,49 @@
     ]
   }
   {
-    'begin': '((<<) *SQL\\b).*\\n?'
+    'begin': '(((<<) *JAVASCRIPT\\b))(.*)\\n?'
     'captures':
-      '0':
-        'name': 'punctuation.definition.string.perl'
       '1':
-        'name': 'string.unquoted.heredoc.perl'
+        'name': 'punctuation.definition.string.perl'
       '2':
+        'name': 'string.unquoted.heredoc.perl'
+      '3':
         'name': 'punctuation.definition.heredoc.perl'
+      '4':
+        'patterns': [
+          {
+            'include': '$self'
+          }
+        ]
+    'contentName': 'text.js.embedded.perl'
+    'end': '(^JAVASCRIPT$)'
+    'patterns': [
+      {
+        'include': '#escaped_char'
+      }
+      {
+        'include': '#variable'
+      }
+      {
+        'include': 'source.js'
+      }
+    ]
+  }
+  {
+    'begin': '(((<<) *SQL\\b))(.*)\\n?'
+    'captures':
+      '1':
+        'name': 'punctuation.definition.string.perl'
+      '2':
+        'name': 'string.unquoted.heredoc.perl'
+      '3':
+        'name': 'punctuation.definition.heredoc.perl'
+      '4':
+        'patterns': [
+          {
+            'include': '$self'
+          }
+        ]
     'contentName': 'source.sql.embedded.perl'
     'end': '(^SQL$)'
     'patterns': [
@@ -1124,14 +1281,20 @@
     ]
   }
   {
-    'begin': '((<<) *POSTSCRIPT\\b).*\\n?'
+    'begin': '(((<<) *POSTSCRIPT\\b))(.*)\\n?'
     'captures':
-      '0':
-        'name': 'punctuation.definition.string.perl'
       '1':
-        'name': 'string.unquoted.heredoc.perl'
+        'name': 'punctuation.definition.string.perl'
       '2':
+        'name': 'string.unquoted.heredoc.perl'
+      '3':
         'name': 'punctuation.definition.heredoc.perl'
+      '4':
+        'patterns': [
+          {
+            'include': '$self'
+          }
+        ]
     'contentName': 'source.postscript.embedded.perl'
     'end': '(^POSTSCRIPT)'
     'patterns': [
@@ -1147,16 +1310,22 @@
     ]
   }
   {
-    'begin': '((<<) *((?![=\\d\\$\\( ])[^;,\'"`\\s)]*)).*\\n?'
+    'begin': '(((<<) *((?![=\\d\\$\\( ])[^;,\'"`\\s\\)]*)))(.*)\\n?'
     'captures':
-      '0':
-        'name': 'punctuation.definition.string.perl'
       '1':
-        'name': 'string.unquoted.heredoc.perl'
+        'name': 'punctuation.definition.string.perl'
       '2':
+        'name': 'string.unquoted.heredoc.perl'
+      '3':
         'name': 'punctuation.definition.heredoc.perl'
+      '5':
+        'patterns': [
+          {
+            'include': '$self'
+          }
+        ]
     'contentName': 'string.unquoted.heredoc.perl'
-    'end': '(^\\3$)'
+    'end': '(^\\4$)'
     'patterns': [
       {
         'include': '#escaped_char'
