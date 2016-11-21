@@ -1,4 +1,4 @@
-describe "perl grammar", ->
+describe "Perl grammar", ->
   grammar = null
 
   beforeEach ->
@@ -75,6 +75,13 @@ describe "perl grammar", ->
       expect(tokens[3]).toEqual value: "{", scopes: ["source.perl"]
       expect(tokens[4]).toEqual value: "m", scopes: ["source.perl", "constant.other.bareword.perl"]
       expect(tokens[5]).toEqual value: "}", scopes: ["source.perl"]
+
+    it "does not treat '#' as a comment in regex match", ->
+      {tokens} = grammar.tokenizeLine("$asd =~ s#asd#foo#;")
+      expect(tokens[3]).toEqual value: "s", scopes: ["source.perl", "string.regexp.replaceXXX.simple_delimiter.perl", "punctuation.definition.string.perl", "support.function.perl"]
+      expect(tokens[4]).toEqual value: "#", scopes: ["source.perl", "string.regexp.replaceXXX.simple_delimiter.perl", "punctuation.definition.string.perl"]
+      expect(tokens[6]).toEqual value: "#", scopes: ["source.perl", "string.regexp.replaceXXX.format.simple_delimiter.perl", "punctuation.definition.string.perl"]
+      expect(tokens[8]).toEqual value: "#", scopes: ["source.perl", "string.regexp.replaceXXX.format.simple_delimiter.perl", "punctuation.definition.string.perl"]
 
   describe "when a regexp find tokenizes", ->
     it "works with all bracket/seperator variations", ->
@@ -310,13 +317,13 @@ describe "perl grammar", ->
       expect(tokens[0]).toEqual value: "__TEST__", scopes: ["source.perl", "string.unquoted.program-block.perl", "punctuation.definition.string.begin.perl"]
 
   describe "when an __END__ constant is used", ->
-    it "does not highlight subsequent lines", ->
+    it "highlights subsequent lines as comments", ->
       lines = grammar.tokenizeLines("""
       "String";
       __END__
       "String";
       """)
-      expect(lines[2][0]).toEqual value: '"String";', scopes: ["source.perl", "text.embedded.perl"]
+      expect(lines[2][0]).toEqual value: '"String";', scopes: ["source.perl", "comment.block.documentation.perl"]
 
   describe "tokenizes compile phase keywords", ->
     it "does highlight all compile phase keywords", ->
@@ -609,3 +616,198 @@ $asd\\n
       expect(tokens[3]).toEqual value: "; ", scopes: ["source.perl"]
       expect(tokens[4]).toEqual value: "#", scopes: ["source.perl", "comment.line.number-sign.perl", "punctuation.definition.comment.perl"]
       expect(tokens[5]).toEqual value: "this is my new class", scopes: ["source.perl", "comment.line.number-sign.perl"]
+
+  describe "when tokenising Pod markup", ->
+    it "highlights Pod commands", ->
+      lines = grammar.tokenizeLines """
+        =pod
+        Bar
+        =cut
+      """
+      expect(lines[0][0]).toEqual value: "=pod", scopes: ["source.perl", "comment.block.documentation.perl", "storage.type.class.pod.perl"]
+      expect(lines[1][0]).toEqual value: "Bar", scopes: ["source.perl", "comment.block.documentation.perl"]
+      expect(lines[2][0]).toEqual value: "=cut", scopes: ["source.perl", "comment.block.documentation.perl", "storage.type.class.pod.perl"]
+
+    it "does not highlight commands with leading whitespace", ->
+      {tokens} = grammar.tokenizeLine(" =pod")
+      expect(tokens[0]).toEqual value: " =pod", scopes: ["source.perl"]
+
+    it "highlights additional command parameters", ->
+      {tokens} = grammar.tokenizeLine("=head1 Heading")
+      expect(tokens[0]).toEqual value: "=head1", scopes: ["source.perl", "comment.block.documentation.perl", "storage.type.class.pod.perl"]
+      expect(tokens[1]).toEqual value: " ", scopes: ["source.perl", "comment.block.documentation.perl"]
+      expect(tokens[2]).toEqual value: "Heading", scopes: ["source.perl", "comment.block.documentation.perl", "variable.other.pod.perl"]
+
+    it "highlights formatting codes", ->
+      lines = grammar.tokenizeLines """
+        =pod
+        See L<perlpod(1)>.
+      """
+      expect(lines[1][0]).toEqual value: "See ", scopes: ["source.perl", "comment.block.documentation.perl"]
+      expect(lines[1][1]).toEqual value: "L<", scopes: ["source.perl", "comment.block.documentation.perl", "entity.name.type.instance.pod.perl"]
+      expect(lines[1][2]).toEqual value: "perlpod(1)", scopes: ["source.perl", "comment.block.documentation.perl", "entity.name.type.instance.pod.perl", "markup.underline.link.hyperlink.pod.perl"]
+      expect(lines[1][3]).toEqual value: ">", scopes: ["source.perl", "comment.block.documentation.perl", "entity.name.type.instance.pod.perl"]
+
+    it "highlights formatting codes in command parameters", ->
+      {tokens} = grammar.tokenizeLine("=head1 This is a B<bold heading>")
+      expect(tokens[2]).toEqual value: "This is a ", scopes: ["source.perl", "comment.block.documentation.perl", "variable.other.pod.perl"]
+      expect(tokens[3]).toEqual value: "B<", scopes: ["source.perl", "comment.block.documentation.perl", "variable.other.pod.perl", "entity.name.type.instance.pod.perl"]
+      expect(tokens[4]).toEqual value: "bold heading", scopes: ["source.perl", "comment.block.documentation.perl", "variable.other.pod.perl", "entity.name.type.instance.pod.perl", "markup.bold.pod.perl"]
+      expect(tokens[5]).toEqual value: ">", scopes: ["source.perl", "comment.block.documentation.perl", "variable.other.pod.perl", "entity.name.type.instance.pod.perl"]
+
+    it "highlights multiple angle-brackets correctly in formatting codes", ->
+      lines = grammar.tokenizeLines """
+        =pod
+        Text I<< <italic> >> Text
+      """
+      expect(lines[1][0]).toEqual value: "Text ", scopes: ["source.perl", "comment.block.documentation.perl"]
+      expect(lines[1][1]).toEqual value: "I<<", scopes: ["source.perl", "comment.block.documentation.perl", "entity.name.type.instance.pod.perl"]
+      expect(lines[1][2]).toEqual value: " <italic> ", scopes: ["source.perl", "comment.block.documentation.perl", "entity.name.type.instance.pod.perl", "markup.italic.pod.perl"]
+      expect(lines[1][3]).toEqual value: ">>", scopes: ["source.perl", "comment.block.documentation.perl", "entity.name.type.instance.pod.perl"]
+      expect(lines[1][4]).toEqual value: " Text", scopes: ["source.perl", "comment.block.documentation.perl"]
+
+    it "uses HTML highlighting in embedded HTML snippets", ->
+      lines = grammar.tokenizeLines """
+        =pod
+        =begin html
+        <b>Bold</b>
+        =end html
+      """
+      expect(lines[1][0]).toEqual value: "=begin", scopes: ["source.perl", "comment.block.documentation.perl", "meta.embedded.pod.perl", "storage.type.class.pod.perl"]
+      expect(lines[1][1]).toEqual value: " ", scopes: ["source.perl", "comment.block.documentation.perl", "meta.embedded.pod.perl"]
+      expect(lines[1][2]).toEqual value: "html", scopes: ["source.perl", "comment.block.documentation.perl", "meta.embedded.pod.perl", "variable.other.pod.perl"]
+      expect(lines[2][0]).toEqual value: "<b>Bold</b>", scopes: ["source.perl", "comment.block.documentation.perl", "meta.embedded.pod.perl", "text.embedded.html.basic"]
+      expect(lines[3][0]).toEqual value: "=end", scopes: ["source.perl", "comment.block.documentation.perl", "meta.embedded.pod.perl", "storage.type.class.pod.perl"]
+      expect(lines[3][1]).toEqual value: " ", scopes: ["source.perl", "comment.block.documentation.perl", "meta.embedded.pod.perl"]
+      expect(lines[3][2]).toEqual value: "html", scopes: ["source.perl", "comment.block.documentation.perl", "meta.embedded.pod.perl", "variable.other.pod.perl"]
+
+    it "cuts embedded snippets off early before a terminating =cut command", ->
+      lines = grammar.tokenizeLines """
+        =pod
+        =begin html
+        <b>Bold</b>
+        =cut
+        my $var;
+      """
+      expect(lines[2][0]).toEqual value: "<b>Bold</b>", scopes: ["source.perl", "comment.block.documentation.perl", "meta.embedded.pod.perl", "text.embedded.html.basic"]
+      expect(lines[3][0]).toEqual value: "=cut", scopes: ["source.perl", "comment.block.documentation.perl", "storage.type.class.pod.perl"]
+      expect(lines[4][0]).toEqual value: "my", scopes: ["source.perl", "storage.modifier.perl"]
+
+  describe "firstLineMatch", ->
+    it "recognises interpreter directives", ->
+      valid = """
+        #!perl -w
+        #! perl -w
+        #!/usr/sbin/perl foo
+        #!/usr/bin/perl foo=bar/
+        #!/usr/sbin/perl
+        #!/usr/sbin/perl foo bar baz
+        #!/usr/bin/env perl
+        #!/usr/bin/env bin/perl
+        #!/usr/bin/perl
+        #!/bin/perl
+        #!/usr/bin/perl --script=usr/bin
+        #! /usr/bin/env A=003 B=149 C=150 D=xzd E=base64 F=tar G=gz H=head I=tail perl
+        #!\t/usr/bin/env --foo=bar perl --quu=quux
+        #! /usr/bin/perl
+        #!/usr/bin/env perl
+      """
+      for line in valid.split /\n/
+        expect(grammar.firstLineRegex.scanner.findNextMatchSync(line)).not.toBeNull()
+
+      invalid = """
+        #! pearl
+        #!=perl
+        perl
+        #perl
+        \x20#!/usr/sbin/perl
+        \t#!/usr/sbin/perl
+        #!
+        #!\x20
+        #!/usr/bin/env-perl/perl-env/
+        #!/usr/bin/env-perl
+        #! /usr/binperl
+        #!\t/usr/bin/env --perl=bar
+      """
+      for line in invalid.split /\n/
+        expect(grammar.firstLineRegex.scanner.findNextMatchSync(line)).toBeNull()
+
+    it "recognises Emacs modelines", ->
+      valid = """
+        #-*-perl-*-
+        #-*-mode:perl-*-
+        /* -*-perl-*- */
+        // -*- PERL -*-
+        /* -*- mode:perl -*- */
+        // -*- font:bar;mode:Perl -*-
+        // -*- font:bar;mode:Perl;foo:bar; -*-
+        // -*-font:mode;mode:perl-*-
+        " -*-foo:bar;mode:Perl;bar:foo-*- ";
+        " -*-font-mode:foo;mode:Perl;foo-bar:quux-*-"
+        "-*-font:x;foo:bar; mode : pErL;bar:foo;foooooo:baaaaar;fo:ba;-*-";
+        "-*- font:x;foo : bar ; mode : pErL ; bar : foo ; foooooo:baaaaar;fo:ba-*-";
+      """
+      for line in valid.split /\n/
+        expect(grammar.firstLineRegex.scanner.findNextMatchSync(line)).not.toBeNull()
+
+      invalid = """
+        /* --*perl-*- */
+        /* -*-- perl -*-
+        /* -*- -- perl -*-
+        /* -*- perl -;- -*-
+        // -*- iPERL -*-
+        // -*- perl-stuff -*-
+        /* -*- model:perl -*-
+        /* -*- indent-mode:perl -*-
+        // -*- font:mode;Perl -*-
+        // -*- mode: -*- Perl
+        // -*- mode: grok-with-perl -*-
+        // -*-font:mode;mode:perl--*-
+      """
+      for line in invalid.split /\n/
+        expect(grammar.firstLineRegex.scanner.findNextMatchSync(line)).toBeNull()
+
+    it "recognises Vim modelines", ->
+      valid = """
+        vim: se filetype=perl:
+        # vim: se ft=perl:
+        # vim: set ft=perl:
+        # vim: set filetype=Perl:
+        # vim: ft=perl
+        # vim: syntax=pERl
+        # vim: se syntax=PERL:
+        # ex: syntax=perl
+        # vim:ft=perl
+        # vim600: ft=perl
+        # vim>600: set ft=perl:
+        # vi:noai:sw=3 ts=6 ft=perl
+        # vi::::::::::noai:::::::::::: ft=perl
+        # vim:ts=4:sts=4:sw=4:noexpandtab:ft=perl
+        # vi:: noai : : : : sw   =3 ts   =6 ft  =perl
+        # vim: ts=4: pi sts=4: ft=perl: noexpandtab: sw=4:
+        # vim: ts=4 sts=4: ft=perl noexpandtab:
+        # vim:noexpandtab sts=4 ft=perl ts=4
+        # vim:noexpandtab:ft=perl
+        # vim:ts=4:sts=4 ft=perl:noexpandtab:\x20
+        # vim:noexpandtab titlestring=hi\|there\\\\ ft=perl ts=4
+      """
+      for line in valid.split /\n/
+        expect(grammar.firstLineRegex.scanner.findNextMatchSync(line)).not.toBeNull()
+
+      invalid = """
+        ex: se filetype=perl:
+        _vi: se filetype=perl:
+         vi: se filetype=perl
+        # vim set ft=perlo
+        # vim: soft=perl
+        # vim: hairy-syntax=perl:
+        # vim set ft=perl:
+        # vim: setft=perl:
+        # vim: se ft=perl backupdir=tmp
+        # vim: set ft=perl set cmdheight=1
+        # vim:noexpandtab sts:4 ft:perl ts:4
+        # vim:noexpandtab titlestring=hi\\|there\\ ft=perl ts=4
+        # vim:noexpandtab titlestring=hi\\|there\\\\\\ ft=perl ts=4
+      """
+      for line in invalid.split /\n/
+        expect(grammar.firstLineRegex.scanner.findNextMatchSync(line)).toBeNull()
